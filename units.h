@@ -36,6 +36,7 @@ private slots:
 private:
     Ui::units *ui;
     QList<unsigned> graphT;
+    quint32 lastSend;
 };
 
 #endif // UNITS_H

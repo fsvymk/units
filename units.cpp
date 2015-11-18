@@ -3,12 +3,16 @@
 #include "ui_units.h"
 #include <QUdpSocket>
 #include <QDateTime>
+#include <qmath.h>
 
 units::units(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::units)
 {
     ui->setupUi(this);
+    //lastSend = QDateTime::fromString (QString("1986-06-06T05:00:00"), Qt::ISODate);
+    lastSend = QDateTime::currentMSecsSinceEpoch();
+    ui->pushButton->click();
 }
 
 units::~units()
@@ -28,41 +32,17 @@ void units::on_pushButton_clicked()         // ADD
     ui->listWidget->addItem(ss(num));
 }
 
-/*
-int units::serialize(entry M, QByteArray* target){
-    bool result = false;
-
-    // Использование встроеного в Qt класса QDataStream оказалось лучшим решением.
-    QDataStream niceTool(target, QIODevice::WriteOnly);
-
-    niceTool << M.t;
-    niceTool << M.v;
-
-    niceTool << M.x;
-    niceTool << M.y;
-
-    niceTool << M.z;
-    niceTool << M.n;
-
-    return result;
-}
-
-entry units::deserialize(QByteArray* source){
-    entry result;
-    QDataStream prettyTool(source, QIODevice::ReadOnly);
-    prettyTool >> result.t >> result.v >> result.x >> result.y >> result.z >> result.n;
-    return result;
-}*/
-
 void units::on_pushButton_2_clicked()       // SEND
 {
-    unsigned range = ui->lineEdit_points->text().toInt();
-    QDateTime setTime = QDateTime::fromString (QString("2000-01-01T00:00:00"), Qt::ISODate);
-    QDateTime current = QDateTime::currentDateTime();
-    quint32 msecs = setTime.time().msecsTo(current.time());
-    ui->line_timestamp->setText(ss(msecs));
-    ui->lineEdit_xfrom->setText(ss(msecs));
-    ui->lineEdit_xto->setText(ss(msecs+range));
+    unsigned steps = ui->lineEdit_points->text().toInt();
+    quint32 current = QDateTime::currentMSecsSinceEpoch();
+    quint32 msecs = current - lastSend;
+    unsigned step = msecs/steps;
+    if(step==0) {p("warning. current time equals time of last send.");}
+
+    ui->line_timestamp->setText(ss(current));
+    ui->lineEdit_xfrom->setText(ss(lastSend));
+    ui->lineEdit_xto->setText(ss(msecs));
 
     QUdpSocket udpSocket;
     QString ip = ui->lineEdit_ip->text();
@@ -75,33 +55,40 @@ void units::on_pushButton_2_clicked()       // SEND
     int i;
     unsigned t;
     foreach(t, graphT){
-        for(i=0; i<range; i++){
+        for(i=0; i<msecs; i+=step){
             entry point;
             point.t = t;    //i%4;
             point.v = 3;    //i%2;
             point.n = 4;    //100+i;
             point.z = 5;    //i%4;
-            point.x = msecs + i;    //i/4;
-            point.y = 10 + 1 * i + 2  * (i%2);    //10 - i/4;
+            point.x = lastSend + i;    //i/4;
+            point.y = 20 + (lastSend+i)%100;   //10 - i/4;
 
             if(ui->radioButton->isChecked()){
                 p("sinus");
+                double sy = (lastSend+i)/1000;
+                point.y = sy;
             }
 
             if(ui->radioButton_2->isChecked()){
                 p("sinus2");
+                double sy = (double)lastSend+i;
+                sy /= 1000;
+                sy = sin(sy);
+                point.y = sy*20;
             }
 
             if(ui->radioButton_3->isChecked()){
-                p("fenze");
+                p("fence");
             }
 
             if(ui->radioButton_4->isChecked()){
-                p("fenze2");
+                p("fence2");
             }
 
             if(ui->radioButton_random->isChecked()){
                 p("random");
+                point.y = qrand()%500 + 500;
             }
 
             serialize(point, &message); // Understandable by hadgehog
@@ -109,10 +96,6 @@ void units::on_pushButton_2_clicked()       // SEND
             udpSocket.writeDatagram(message, QHostAddress(ip), port);
         }
     }
+    lastSend = current;
 }
 
-/*
-void units::on_listWidget_itemClicked(QListWidgetItem *item)
-{
-    QString itemText = item->text();
-}*/
