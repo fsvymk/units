@@ -2,7 +2,7 @@
 #include "units.h"
 #include "ui_units.h"
 #include <QUdpSocket>
-
+#include <QDateTime>
 
 units::units(QWidget *parent) :
     QMainWindow(parent),
@@ -24,6 +24,8 @@ void units::on_pushButton_clicked()         // ADD
 {
     int num = ui->lineEdit->text().toInt();
     ui->lineEdit->setText(ss(num+1));
+    graphT.append(num);
+    ui->listWidget->addItem(ss(num));
 }
 
 /*
@@ -54,6 +56,14 @@ entry units::deserialize(QByteArray* source){
 
 void units::on_pushButton_2_clicked()       // SEND
 {
+    unsigned range = ui->lineEdit_points->text().toInt();
+    QDateTime setTime = QDateTime::fromString (QString("2000-01-01T00:00:00"), Qt::ISODate);
+    QDateTime current = QDateTime::currentDateTime();
+    quint32 msecs = setTime.time().msecsTo(current.time());
+    ui->line_timestamp->setText(ss(msecs));
+    ui->lineEdit_xfrom->setText(ss(msecs));
+    ui->lineEdit_xto->setText(ss(msecs+range));
+
     QUdpSocket udpSocket;
     QString ip = ui->lineEdit_ip->text();
     quint16 port = ui->lineEdit_port->text().toInt();
@@ -63,20 +73,46 @@ void units::on_pushButton_2_clicked()       // SEND
     message.append(QByteArray::fromHex("0001000100010001"));
 
     int i;
-    for(i=0; i<32; i++){
+    unsigned t;
+    foreach(t, graphT){
+        for(i=0; i<range; i++){
+            entry point;
+            point.t = t;    //i%4;
+            point.v = 3;    //i%2;
+            point.n = 4;    //100+i;
+            point.z = 5;    //i%4;
+            point.x = msecs + i;    //i/4;
+            point.y = 10 + 1 * i + 2  * (i%2);    //10 - i/4;
 
-        entry point;
-        point.t = i%4;
-        point.v = i%2;
-        point.n = 100+i;
-        point.z = i%4;
-        point.x = i/4;
-        point.y = 10 - i/4;
+            if(ui->radioButton->isChecked()){
+                p("sinus");
+            }
 
-        serialize(point, &message); // Understandable by hadgehog
-        udpSocket.writeDatagram(message, QHostAddress(ip), port);
+            if(ui->radioButton_2->isChecked()){
+                p("sinus2");
+            }
 
+            if(ui->radioButton_3->isChecked()){
+                p("fenze");
+            }
+
+            if(ui->radioButton_4->isChecked()){
+                p("fenze2");
+            }
+
+            if(ui->radioButton_random->isChecked()){
+                p("random");
+            }
+
+            serialize(point, &message); // Understandable by hadgehog
+            p(toString(point));
+            udpSocket.writeDatagram(message, QHostAddress(ip), port);
+        }
     }
-
-
 }
+
+/*
+void units::on_listWidget_itemClicked(QListWidgetItem *item)
+{
+    QString itemText = item->text();
+}*/

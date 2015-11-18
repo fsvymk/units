@@ -63,12 +63,11 @@ static int serialize(entry M, QByteArray* target){
 
     // Использование встроеного в Qt класса QDataStream оказалось лучшим решением.
     QDataStream niceTool(target, QIODevice::WriteOnly);
+    niceTool << M.x;
+    niceTool << M.y;
 
     niceTool << M.t;
     niceTool << M.v;
-
-    niceTool << M.x;
-    niceTool << M.y;
 
     niceTool << M.z;
     niceTool << M.n;
@@ -79,7 +78,7 @@ static int serialize(entry M, QByteArray* target){
 static entry deserialize(QByteArray* source){
     entry result;
     QDataStream prettyTool(source, QIODevice::ReadOnly);
-    prettyTool >> result.t >> result.v >> result.x >> result.y >> result.z >> result.n;
+    prettyTool >> result.x >> result.y >> result.t >> result.v >>  result.z >> result.n;
     return result;
 }
 

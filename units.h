@@ -31,8 +31,11 @@ private slots:
     void p(QString str);
 
     //QString s(int str); // entry.h
+    //void on_listWidget_itemClicked(QListWidgetItem *item);
+
 private:
     Ui::units *ui;
+    QList<unsigned> graphT;
 };
 
 #endif // UNITS_H
