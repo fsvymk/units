@@ -23,15 +23,7 @@ private slots:
 
     void on_pushButton_2_clicked();
 
-    //QString toString(entry s); // entry.h
-    //int serialize(entry M, QByteArray* target);
-    //entry deserialize(QByteArray* source);
-
-    //user methods:
     void p(QString str);
-
-    //QString s(int str); // entry.h
-    //void on_listWidget_itemClicked(QListWidgetItem *item);
 
 private:
     Ui::units *ui;
