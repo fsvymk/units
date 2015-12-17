@@ -12,7 +12,8 @@ units::units(QWidget *parent) :
 {
     ui->setupUi(this);
     //lastSend = QDateTime::fromString (QString("1986-06-06T05:00:00"), Qt::ISODate);
-    lastSend = QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
+    //lastSend = QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
+    lastSend = QTime::currentTime().msecsSinceStartOfDay();
     ui->pushButton->click();
 
     Server = new QUdpSocket;
