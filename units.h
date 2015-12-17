@@ -37,6 +37,7 @@ private:
     QUdpSocket *Server;
 
     quint16     serverPort;
+    quint32     randPointer;
 };
 
 #endif // UNITS_H

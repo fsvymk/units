@@ -112,6 +112,7 @@ void units::on_pushButton_2_clicked()       // SEND
 
             if(ui->radioButton_3->isChecked()){
                 p("fence");
+
             }
 
             if(ui->radioButton_4->isChecked()){
