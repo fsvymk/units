@@ -4,6 +4,7 @@
 #include <QUdpSocket>
 #include <QDateTime>
 #include <qmath.h>
+#include <QTimer>
 
 units::units(QWidget *parent) :
     QMainWindow(parent),
@@ -11,13 +12,34 @@ units::units(QWidget *parent) :
 {
     ui->setupUi(this);
     //lastSend = QDateTime::fromString (QString("1986-06-06T05:00:00"), Qt::ISODate);
-    lastSend = QDateTime::currentMSecsSinceEpoch();
+    lastSend = QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
     ui->pushButton->click();
+
+    Server = new QUdpSocket;
+    connect(Server, SIGNAL(readyRead()),
+                this, SLOT(readUdpDatagrams()));
+
+    quint16 serverPort = ui->lineEdit_serverPort->text().toInt();
+    if (Server->bind(serverPort)) { ui->textEdit_incoming->append("Ready.");}
+    else {       ui->textEdit_incoming->append("Cann't bind port" + QString::number(serverPort));    }
 }
 
 units::~units()
 {
     delete ui;
+}
+
+void units::readUdpDatagrams()
+{
+    while (Server->hasPendingDatagrams()) {
+        QByteArray datagram;
+        //datagram.resize(udpServerSocket.pendingDatagramSize());
+        QHostAddress sender;
+        quint16 senderPort;
+        Server->readDatagram(datagram.data(), datagram.size(),
+                                &sender, &senderPort);
+        ui->textEdit_incoming->append(datagram.toHex());
+    }
 }
 
 void units::p(QString str){
@@ -34,10 +56,12 @@ void units::on_pushButton_clicked()         // ADD
 
 void units::on_pushButton_2_clicked()       // SEND
 {
+    bool oneDatagram = ui->checkBox_oneDatagram->isChecked();
     unsigned steps = ui->lineEdit_points->text().toInt();
-    quint32 current = QDateTime::currentMSecsSinceEpoch();
+    quint32 current=  QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
     quint32 msecs = current - lastSend;
     unsigned step = msecs/steps;
+
     if(step==0) {p("warning. current time equals time of last send.");}
 
     ui->line_timestamp->setText(ss(current));
@@ -48,6 +72,7 @@ void units::on_pushButton_2_clicked()       // SEND
     QString ip = ui->lineEdit_ip->text();
     quint16 port = ui->lineEdit_port->text().toInt();
 
+    QByteArray allMessages;
     QByteArray message;
     message.append(QByteArray::fromHex("0000000100000001"));
     message.append(QByteArray::fromHex("0001000100010001"));
@@ -93,9 +118,19 @@ void units::on_pushButton_2_clicked()       // SEND
 
             serialize(point, &message); // Understandable by hadgehog
             p(toString(point));
-            udpSocket.writeDatagram(message, QHostAddress(ip), port);
+            if(oneDatagram){
+                    allMessages.append(message);
+            }else{
+                udpSocket.writeDatagram(message, QHostAddress(ip), port);
+            }
         }
     }
+    if(oneDatagram){udpSocket.writeDatagram(allMessages, QHostAddress(ip), port);}
     lastSend = current;
 }
 
+
+void units::on_checkBox_oneDatagram_clicked()
+{
+
+}

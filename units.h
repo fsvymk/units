@@ -24,11 +24,14 @@ private slots:
     void on_pushButton_2_clicked();
 
     void p(QString str);
+    void readUdpDatagrams();
+    void on_checkBox_oneDatagram_clicked();
 
 private:
     Ui::units *ui;
     QList<unsigned> graphT;
     quint32 lastSend;
+    QUdpSocket *Server;
 };
 
 #endif // UNITS_H
