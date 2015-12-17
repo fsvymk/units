@@ -58,7 +58,7 @@ void units::on_pushButton_2_clicked()       // SEND
 {
     bool oneDatagram = ui->checkBox_oneDatagram->isChecked();
     unsigned steps = ui->lineEdit_points->text().toInt();
-    quint32 current=  QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
+    quint32 current=  QTime::currentTime().msecsSinceStartOfDay();
     quint32 msecs = current - lastSend;
     unsigned step = msecs/steps;
 
