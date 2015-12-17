@@ -23,15 +23,20 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+    quint32 timestamp();
     void p(QString str);
     void readUdpDatagrams();
     void on_checkBox_oneDatagram_clicked();
+
+    void on_lineEdit_serverPort_selectionChanged();
 
 private:
     Ui::units *ui;
     QList<unsigned> graphT;
     quint32 lastSend;
     QUdpSocket *Server;
+
+    quint16     serverPort;
 };
 
 #endif // UNITS_H

@@ -13,7 +13,8 @@ units::units(QWidget *parent) :
     ui->setupUi(this);
     //lastSend = QDateTime::fromString (QString("1986-06-06T05:00:00"), Qt::ISODate);
     //lastSend = QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
-    lastSend = QTime::currentTime().msecsSinceStartOfDay();
+    //lastSend = QTime::currentTime().msecsSinceStartOfDay();
+    lastSend = timestamp();
     ui->pushButton->click();
 
     Server = new QUdpSocket;
@@ -28,6 +29,10 @@ units::units(QWidget *parent) :
 units::~units()
 {
     delete ui;
+}
+
+quint32 units::timestamp(){
+    return QDateTime::currentDateTimeUtc().time().msecsSinceStartOfDay();
 }
 
 void units::readUdpDatagrams()
@@ -59,7 +64,8 @@ void units::on_pushButton_2_clicked()       // SEND
 {
     bool oneDatagram = ui->checkBox_oneDatagram->isChecked();
     unsigned steps = ui->lineEdit_points->text().toInt();
-    quint32 current=  QTime::currentTime().msecsSinceStartOfDay();
+    //QTime T = QDateTime::currentDateTimeUtc().time();
+    quint32 current= timestamp(); // T.msecsSinceStartOfDay();
     quint32 msecs = current - lastSend;
     unsigned step = msecs/steps;
 
@@ -134,4 +140,9 @@ void units::on_pushButton_2_clicked()       // SEND
 void units::on_checkBox_oneDatagram_clicked()
 {
 
+}
+
+void units::on_lineEdit_serverPort_selectionChanged()
+{
+    serverPort = ui->lineEdit_serverPort->text().toInt();
 }
