@@ -44,7 +44,8 @@ void units::readUdpDatagrams()
         quint16 senderPort;
         Server->readDatagram(datagram.data(), datagram.size(),
                                 &sender, &senderPort);
-        ui->textEdit_incoming->append(datagram.toHex());
+
+        ui->textEdit_incoming->append(ss(datagram.toInt()));
     }
 }
 
@@ -117,6 +118,9 @@ void units::on_pushButton_2_clicked()       // SEND
 
             if(ui->radioButton_4->isChecked()){
                 p("fence2");
+                randPointer -= 10;
+                randPointer += qrand()%20;
+                point.y = randPointer;
             }
 
             if(ui->radioButton_random->isChecked()){
