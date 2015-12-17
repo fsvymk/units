@@ -17,6 +17,7 @@ units::units(QWidget *parent) :
     lastSend = timestamp();
     ui->pushButton->click();
 
+    randPointer = 80;
     Server = new QUdpSocket;
     connect(Server, SIGNAL(readyRead()),
                 this, SLOT(readUdpDatagrams()));
