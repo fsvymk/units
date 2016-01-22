@@ -20,7 +20,7 @@
 
 struct entry{
     quint32 x;
-    quint32 y;   // 64 bits
+    qint32 y;   // 64 bits
     quint16 z;
     quint16 v;
     quint16 n;

@@ -91,11 +91,11 @@ void units::on_pushButton_2_clicked()       // SEND
     foreach(t, graphT){
         for(i=0; i<msecs; i+=step){
             entry point;
-            point.t = t;    //i%4;
-            point.v = 3;    //i%2;
-            point.n = 4;    //100+i;
-            point.z = 5;    //i%4;
-            point.x = lastSend + i;    //i/4;
+            point.t = t;                        //i%4;
+            point.v = 3;                        //i%2;
+            point.n = qrand()%4;                //100+i;
+            point.z = 5;                        //i%4;
+            point.x = lastSend + i;             //i/4;
             point.y = 20 + (lastSend+i)%100;   //10 - i/4;
 
             if(ui->radioButton->isChecked()){
@@ -126,7 +126,7 @@ void units::on_pushButton_2_clicked()       // SEND
 
             if(ui->radioButton_random->isChecked()){
                 p("random");
-                point.y = qrand()%500 + 500;
+                point.y = qrand()%500 - 500;
             }
 
             serialize(point, &message); // Understandable by hadgehog
