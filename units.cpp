@@ -93,7 +93,7 @@ void units::on_pushButton_2_clicked()       // SEND
     QByteArray pheader;
 
     // create simple header(8 bytes)
-    pheader.append(QByteArray::fromHex("0707000007070000"));
+    pheader.append(QByteArray::fromHex("0000000000000000"));
 
     int pn; // place of internal packet in strong sequence;
     for(pn=0; pn<packetsCount; pn++){
