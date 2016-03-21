@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>896</width>
-    <height>421</height>
+    <height>459</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -364,6 +364,9 @@
     <property name="text">
      <string>Send all by one UDP datagram</string>
     </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QTextEdit" name="textEdit_incoming">
     <property name="geometry">
@@ -401,6 +404,22 @@
      <string>16001</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="checkBox_newFormat">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>10</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>New Format</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -408,7 +427,7 @@
      <x>0</x>
      <y>0</y>
      <width>896</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

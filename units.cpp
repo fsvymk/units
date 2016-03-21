@@ -64,7 +64,9 @@ void units::on_pushButton_clicked()         // ADD
 
 void units::on_pushButton_2_clicked()       // SEND
 {
-    bool oneDatagram = ui->checkBox_oneDatagram->isChecked();
+    bool oneDatagram    = ui->checkBox_oneDatagram->isChecked();
+    bool newFormat      = ui->checkBox_newFormat->isChecked();
+
     unsigned steps = ui->lineEdit_points->text().toInt();
     //QTime T = QDateTime::currentDateTimeUtc().time();
     quint32 current= timestamp(); // T.msecsSinceStartOfDay();
@@ -86,55 +88,69 @@ void units::on_pushButton_2_clicked()       // SEND
     message.append(QByteArray::fromHex("0000000100000001"));
     message.append(QByteArray::fromHex("0001000100010001"));
 
-    int i;
-    unsigned t;
-    foreach(t, graphT){
-        for(i=0; i<msecs; i+=step){
-            entry point;
-            point.t = t;                        //i%4;
-            point.v = 3;                        //i%2;
-            point.n = qrand()%4+61;            //100+i;
-            point.z = qrand()%4;                //i%4;
-            point.x = lastSend + i;             //i/4;
-            point.y = 20 + (lastSend+i)%100;   //10 - i/4;
+    // new Format
+    int packetsCount = 4;
+    QByteArray pheader;
 
-            if(ui->radioButton->isChecked()){
-                p("sinus");
-                double sy = (lastSend+i)/1000;
-                point.y = sy;
-            }
+    // create simple header(8 bytes)
+    pheader.append(QByteArray::fromHex("0707000007070000"));
 
-            if(ui->radioButton_2->isChecked()){
-                p("sinus2");
-                double sy = (double)lastSend+i;
-                sy /= 1000;
-                sy = sin(sy);
-                point.y = sy*20;
-            }
+    int pn; // place of internal packet in strong sequence;
+    for(pn=0; pn<packetsCount; pn++){
 
-            if(ui->radioButton_3->isChecked()){
-                p("fence");
+        allMessages.append(pheader);
 
-            }
+        int i;
+        unsigned t;
 
-            if(ui->radioButton_4->isChecked()){
-                p("fence2");
-                randPointer -= 10;
-                randPointer += qrand()%20;
-                point.y = randPointer;
-            }
+        foreach(t, graphT){
+            for(i=0; i<msecs; i+=step){
+                entry point;
+                point.t = t;                        //i%4;
+                point.v = 3;                        //i%2;
+                point.n = qrand()%4+61;            //100+i;
+                point.z = qrand()%4;                //i%4;
+                point.x = lastSend + i;             //i/4;
+                point.y = 20 + (lastSend+i)%100;   //10 - i/4;
 
-            if(ui->radioButton_random->isChecked()){
-                p("random");
-                point.y = qrand()%1000 - 500;
-            }
+                if(ui->radioButton->isChecked()){
+                    p("sinus");
+                    double sy = (lastSend+i)/1000;
+                    point.y = sy;
+                }
 
-            serialize(point, &message); // Understandable by hadgehog
-            p(toString(point));
-            if(oneDatagram){
-                    allMessages.append(message);
-            }else{
-                udpSocket.writeDatagram(message, QHostAddress(ip), port);
+                if(ui->radioButton_2->isChecked()){
+                    p("sinus2");
+                    double sy = (double)lastSend+i;
+                    sy /= 1000;
+                    sy = sin(sy);
+                    point.y = sy*20;
+                }
+
+                if(ui->radioButton_3->isChecked()){
+                    p("fence");
+
+                }
+
+                if(ui->radioButton_4->isChecked()){
+                    p("fence2");
+                    randPointer -= 10;
+                    randPointer += qrand()%20;
+                    point.y = randPointer;
+                }
+
+                if(ui->radioButton_random->isChecked()){
+                    p("random");
+                    point.y = qrand()%1000 - 500;
+                }
+
+                serialize(point, &message); // Understandable by hadgehog
+                p(toString(point));
+                if(oneDatagram){
+                        allMessages.append(message);
+                }else{
+                    udpSocket.writeDatagram(message, QHostAddress(ip), port);
+                }
             }
         }
     }
