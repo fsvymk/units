@@ -65,7 +65,7 @@ void units::on_pushButton_clicked()         // ADD
 void units::on_pushButton_2_clicked()       // SEND
 {
     bool oneDatagram    = ui->checkBox_oneDatagram->isChecked();
-    bool newFormat      = ui->checkBox_newFormat->isChecked();
+    bool newFormat      = true; //ui->checkBox_newFormat->isChecked();
 
     unsigned steps = ui->lineEdit_points->text().toInt();
     //QTime T = QDateTime::currentDateTimeUtc().time();
