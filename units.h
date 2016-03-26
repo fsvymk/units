@@ -30,6 +30,16 @@ private slots:
 
     void on_lineEdit_serverPort_selectionChanged();
 
+    void on_horizontalSlider_4_rangeChanged(int min, int max);
+
+    void on_horizontalSlider_4_actionTriggered(int action);
+
+    void on_horizontalSlider_4_sliderMoved(int position);
+
+    void on_horizontalSlider_4_valueChanged(int value);
+
+    void on_horizontalSlider_3_valueChanged(int value);
+
 private:
     Ui::units *ui;
     QList<unsigned> graphT;

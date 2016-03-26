@@ -168,3 +168,36 @@ void units::on_lineEdit_serverPort_selectionChanged()
 {
     serverPort = ui->lineEdit_serverPort->text().toInt();
 }
+
+void units::on_horizontalSlider_4_rangeChanged(int min, int max)
+{
+
+}
+
+void units::on_horizontalSlider_4_actionTriggered(int action)
+{
+
+}
+
+void units::on_horizontalSlider_4_sliderMoved(int position)
+{
+    ui->lineEdit_repeat->setText(QString::number(position));
+}
+
+void units::on_horizontalSlider_4_valueChanged(int value)
+{
+    ui->lineEdit_repeat->setText(QString::number(value));
+}
+
+void units::on_horizontalSlider_3_valueChanged(int value)
+{
+    if(value == 0){ // Old Format
+        ui->comboBox->setDisabled(true);
+        ui->label_13->setEnabled(false);
+    }else
+    {
+        // New Format
+        ui->comboBox->setEnabled(true);
+        ui->label_13->setDisabled(false);
+    }
+}
